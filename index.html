@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老约翰读书会"一书一测"批改分析系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 预加载所需库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <!-- 添加XLSX库 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1>老约翰读书会 "一书一测" 批改分析系统</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" data-page="input-page" class="active">答案录入</a></li>
+                    <li><a href="#" data-page="report-page">测评报告</a></li>
+                    <li><a href="#" data-page="answer-management">答案库管理</a></li>
+                    <li><a href="#" data-page="shared-reports">分享记录</a></li>                   
+                    <li><a href="#" data-page="history-page">历史记录</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <!-- 答案录入页 -->
+            <section id="input-page" class="page active">
+                <h2>答案录入</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="grade">年级</label>
+                        <select id="grade">
+                            <option value="">请选择年级</option>
+                            <option value="1">一年级</option>
+                            <option value="2">二年级</option>
+                            <option value="3">三年级</option>
+                            <option value="4">四年级</option>
+                            <option value="5">五年级</option>
+                            <option value="6">六年级</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="book">书籍</label>
+                        <select id="book" disabled>
+                            <option value="">请先选择年级</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-name">学生姓名</label>
+                        <input type="text" id="student-name" placeholder="请输入学生姓名">
+                    </div>
+                </div>
+                
+                <div id="questions-container" class="hidden">
+                    <h3>请选择答案</h3>
+                    <div id="answer-inputs"></div>
+                    
+                    <div class="buttons">
+                        <button id="submit-answers" class="primary-btn">提交答案</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 答案库管理页 -->
+            <section id="answer-management" class="page">
+                <h2>答案库管理</h2>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="manage-grade">年级</label>
+                        <select id="manage-grade">
+                            <option value="">请选择年级</option>
+                            <option value="1">一年级</option>
+                            <option value="2">二年级</option>
+                            <option value="3">三年级</option>
+                            <option value="4">四年级</option>
+                            <option value="5">五年级</option>
+                            <option value="6">六年级</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="manage-book">书籍</label>
+                        <div class="input-with-button">
+                            <select id="manage-book" disabled>
+                                <option value="">请先选择年级</option>
+                            </select>
+                            <button id="delete-selected-book-btn" class="secondary-btn" title="删除所选书籍">删除书籍</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="excel-import-container">
+                    <h3>批量导入标准答案</h3>
+                    <p class="instruction">选择Excel文件导入，文件名格式为"年级-书籍.xlsx"，可一次选择多个文件</p>
+                    <input type="file" id="excel-files" accept=".xlsx,.xls" multiple />
+                    <button id="import-excel-btn" class="primary-btn">导入Excel</button>
+                </div>
+                
+                <div id="standard-answers-container" class="hidden collapsed-view">
+                    <h3>标准答案设置</h3>
+                    <p class="instruction">点击题目行可展开详细设置。设置完成后点击保存按钮。</p>
+                    <div id="standard-answer-inputs"></div>
+                    
+                    <div class="buttons">
+                        <button id="save-standard-answers" class="primary-btn">保存标准答案</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 历史记录页 -->
+            <section id="history-page" class="page">
+                <h2>历史记录</h2>
+                <div id="history-records"></div>
+            </section>
+            
+            <!-- 分享记录页 -->
+            <section id="shared-reports" class="page">
+                <h2>分享记录</h2>
+                <p class="instruction">这里显示您创建的所有报告分享链接，可以复制链接发送给家长或学生</p>
+                <div id="shared-reports-list"></div>
+            </section>
+            
+            <!-- 测评报告页 -->
+            <section id="report-page" class="page">
+                <h2>测评报告</h2>
+                
+                <div id="report-container" class="hidden">
+                    <div class="student-info">
+                        <h3 id="report-student-name"></h3>
+                        <p id="report-book-info"></p>
+                        <p id="report-date"></p>
+                    </div>
+                    
+                    <div class="score-summary">
+                        <div class="score-card">
+                            <h4>准确率</h4>
+                            <div id="accuracy-rate" class="score"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="radar-chart-container">
+                        <canvas id="radar-chart"></canvas>
+                    </div>
+                    
+                    <div class="dimension-analysis">
+                        <h3>阅读能力评价</h3>
+                        <div id="dimension-details"></div>
+                    </div>
+                    
+                    <div class="progress-analysis">
+                        <h3>进步情况分析</h3>
+                        <div id="progress-analysis"></div>
+                    </div>
+                    
+                    <div class="wrong-questions">
+                        <h3>错题分析</h3>
+                        <div id="wrong-questions-list"></div>
+                    </div>
+                    
+                    <div class="improvement-suggestions">
+                        <h3>分析和建议</h3>
+                        <div id="suggestions"></div>
+                    </div>
+                </div>
+                
+                <div class="buttons no-print">
+                    <button id="print-report" class="primary-btn">打印</button>
+                    <button id="new-assessment" class="secondary-btn">新测评</button>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="no-print">
+            <p>&copy; 2025 老约翰读书会"一书一测"批改分析系统</p>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html> 
