@@ -1,61 +1,6 @@
 // 数据库初始化
 let answersDatabase = {};
-let booksDatabase = {
-    "1": [
-        "你为什么不开花", "小兔的帽子", "森林音乐会", "彩虹桥的故事",
-        "小松鼠的秋天", "蚂蚁和西瓜", "小猫找新家", "大象的长鼻子",
-        "奇怪的种子", "小熊的第一次冬眠", "红色的树叶", "池塘里的秘密",
-        "会飞的小鸟", "石头汤", "萝卜回家", "小花猫钓鱼",
-        "青蛙跳跳跳", "小熊捉蜜蜂", "小狐狸采蘑菇", "图图找朋友",
-        "彩虹鱼", "小兔子乖乖", "花婆婆", "一颗超级顽固的牙",
-        "小猪变形记", "我是霸王龙", "爷爷一定有办法", "一园青菜成了精"
-    ],
-    "2": [
-        "星星的旅行", "小猫钓鱼", "神奇的铅笔", "大树的秘密",
-        "小兔子的胡萝卜", "会说话的花", "小猪的梦想", "风铃的声音",
-        "云朵工厂", "小熊的雨伞", "不睡觉的猫头鹰", "小蚂蚁搬家",
-        "颜色小镇", "小河的旅程", "影子的故事", "雪花的秘密",
-        "会跳舞的铅笔", "点点的世界", "大海的歌声", "小鸟的信",
-        "狐狸孵蛋", "阿莫的生病日", "鼠小弟的小背心", "苏菲的杰作",
-        "大脚丫跳芭蕾", "我爸爸", "天才狗仔队", "妈妈的红沙发"
-    ],
-    "3": [
-        "海底探险记", "山顶的风铃", "魔法书店", "影子朋友",
-        "神秘的公园", "图书馆的夜晚", "风的旅行", "树叶的信",
-        "月亮的房子", "星星的灯笼", "云朵的羊毛", "雨滴的故事",
-        "会跳舞的石头", "地下城堡", "消失的河流", "会走路的桥",
-        "荧光森林", "水下城市", "飞行的岛屿", "会说话的墙",
-        "了不起的狐狸爸爸", "青蛙王子", "木偶奇遇记", "绿野仙踪",
-        "小王子", "夏洛的网", "爱丽丝漫游仙境", "柳林风声"
-    ],
-    "4": [
-        "时间的礼物", "云朵邮递员", "奇妙图书馆", "月亮的微笑",
-        "蓝色的河流", "小镇的钟表匠", "会唱歌的树", "天空的信使",
-        "神秘的灯塔", "雾中的森林", "梦想收集者", "银河的歌声",
-        "风的画家", "彩虹的尽头", "旧房子的故事", "记忆的收藏家",
-        "沙漠中的绿洲", "遗失的音符", "未完成的画", "夜晚的市场",
-        "纳尼亚传奇", "哈利波特与魔法石", "小公主", "秘密花园",
-        "长袜子皮皮", "神奇树屋", "查理与巧克力工厂", "海底两万里"
-    ],
-    "5": [
-        "城市与森林", "寻找宝藏", "梦想的种子", "古老的钟表",
-        "失落的地图", "穿越时空的信", "古老的书店", "海底的城堡",
-        "星星的收集者", "天空的边界", "记忆的博物馆", "忘记的旋律",
-        "雨中的城市", "梦境的守护者", "迷雾的小镇", "遗忘的花园",
-        "时间的长河", "光影的舞者", "城市的秘密", "孤独的灯塔",
-        "鲁滨逊漂流记", "格列佛游记", "伊索寓言", "汤姆索亚历险记",
-        "窗边的小豆豆", "小屁孩日记", "绿山墙的安妮", "西游记"
-    ],
-    "6": [
-        "未来的信", "发明家俱乐部", "失落的王国", "星际旅行笔记",
-        "机器人的心", "时间旅行者", "平行世界的门", "科学家的实验室",
-        "未知星球的访客", "虚拟世界的冒险", "数据海洋中的探险", "思维迷宫",
-        "未来城市的设计师", "记忆备份站", "人工智能的梦", "量子隧道",
-        "科技森林", "时间碎片", "宇宙图书馆", "反重力实验",
-        "三体", "基地", "银河系漫游指南", "安德的游戏",
-        "沙丘", "神秘岛", "永恒的终结", "从地球到月球"
-    ]
-};
+let booksDatabase = {}; // 初始化为空对象，后续从localStorage加载或设置默认值
 // 历史测评记录
 let historyRecords = [];
 
@@ -1792,6 +1737,12 @@ function setupExcelImport() {
             if (importedBooks.length > 0) {
                 const lastImported = importedBooks[importedBooks.length - 1];
                 
+                // 切换到答案库管理标签页
+                const answerManagementTab = document.querySelector('nav a[data-page="answer-management"]');
+                if (answerManagementTab) {
+                    answerManagementTab.click();
+                }
+                
                 // 在答案库管理页自动选择导入的年级和书籍
                 const manageGradeSelect = document.getElementById('manage-grade');
                 const manageBookSelect = document.getElementById('manage-book');
@@ -1818,36 +1769,51 @@ function setupExcelImport() {
                             }
                             displayStandardAnswerInputs(answersDatabase[bookKey]);
                         }
-                    }, 100);
-                    
-                    // 切换到答案库管理标签页
-                    const answerManagementTab = document.querySelector('a[data-page="answer-management"]');
-                    if (answerManagementTab) {
-                        answerManagementTab.click();
-                    }
-                }
-                
-                // 在答案录入页也自动选择导入的年级和书籍
-                const gradeSelect = document.getElementById('grade');
-                const bookSelect = document.getElementById('book');
-                
-                if (gradeSelect && bookSelect) {
-                    // 设置年级选择器值并触发change事件
-                    gradeSelect.value = lastImported.grade;
-                    const gradeEvent = new Event('change');
-                    gradeSelect.dispatchEvent(gradeEvent);
-                    
-                    // 等待书籍下拉框更新后，再选择书籍
-                    setTimeout(() => {
-                        bookSelect.value = lastImported.book;
-                        bookSelect.dispatchEvent(new Event('change'));
-                    }, 100);
+                    }, 300); // 增加延迟时间，确保下拉框已更新完成
                 }
             }
             
             // 提示用户
             if (successCount > 0) {
                 alert(`成功导入${successCount}个Excel文件的答案数据`);
+                
+                // 更新年级下拉菜单
+                const gradeSelect = document.getElementById('grade');
+                const manageGradeSelect = document.getElementById('manage-grade');
+                
+                // 更新书籍下拉菜单
+                if (importedBooks.length > 0) {
+                    // 自动选择最后导入的书籍的年级
+                    const lastImported = importedBooks[importedBooks.length - 1];
+                    
+                    // 在答案录入页选择书籍
+                    if (gradeSelect) {
+                        gradeSelect.value = lastImported.grade;
+                        gradeSelect.dispatchEvent(new Event('change'));
+                        
+                        setTimeout(() => {
+                            const bookSelect = document.getElementById('book');
+                            if (bookSelect) {
+                                bookSelect.value = lastImported.book;
+                                bookSelect.dispatchEvent(new Event('change'));
+                            }
+                        }, 100);
+                    }
+                    
+                    // 在答案库管理页选择书籍
+                    if (manageGradeSelect) {
+                        manageGradeSelect.value = lastImported.grade;
+                        manageGradeSelect.dispatchEvent(new Event('change'));
+                        
+                        setTimeout(() => {
+                            const manageBookSelect = document.getElementById('manage-book');
+                            if (manageBookSelect) {
+                                manageBookSelect.value = lastImported.book;
+                                manageBookSelect.dispatchEvent(new Event('change'));
+                            }
+                        }, 100);
+                    }
+                }
             }
         }, 2000);
         
@@ -2746,9 +2712,28 @@ function loadLocalData() {
         try {
             booksDatabase = JSON.parse(storedBooks);
             console.log('从本地存储加载了书籍数据库');
+            
+            // 检查是否有有效数据
+            let hasData = false;
+            for (const grade in booksDatabase) {
+                if (booksDatabase[grade] && booksDatabase[grade].length > 0) {
+                    hasData = true;
+                    console.log(`年级${grade}有${booksDatabase[grade].length}本书`);
+                    break;
+                }
+            }
+            
+            // 如果没有有效数据，则设置默认书籍
+            if (!hasData) {
+                setDefaultBooks();
+            }
         } catch (e) {
             console.error('解析本地存储中的书籍数据库失败:', e);
+            setDefaultBooks();
         }
+    } else {
+        // 如果本地存储中没有书籍数据，则设置默认书籍
+        setDefaultBooks();
     }
     
     // 加载历史记录
@@ -2761,6 +2746,38 @@ function loadLocalData() {
             console.error('解析本地存储中的历史记录失败:', e);
         }
     }
+}
+
+// 设置默认书籍数据
+function setDefaultBooks() {
+    console.log('设置默认书籍数据');
+    booksDatabase = {
+        "1": [
+            "你为什么不开花", "小兔的帽子", "森林音乐会", "彩虹桥的故事",
+            "小松鼠的秋天", "蚂蚁和西瓜", "小猫找新家", "大象的长鼻子"
+        ],
+        "2": [
+            "星星的旅行", "小猫钓鱼", "神奇的铅笔", "大树的秘密",
+            "小兔子的胡萝卜", "会说话的花", "小猪的梦想", "风铃的声音"
+        ],
+        "3": [
+            "海底探险记", "山顶的风铃", "魔法书店", "影子朋友",
+            "神秘的公园", "图书馆的夜晚", "小王子", "夏洛的网"
+        ],
+        "4": [
+            "时间的礼物", "云朵邮递员", "奇妙图书馆", "月亮的微笑",
+            "神秘的灯塔", "雾中的森林", "小公主", "秘密花园"
+        ],
+        "5": [
+            "城市与森林", "寻找宝藏", "梦想的种子", "古老的钟表",
+            "失落的地图", "鲁滨逊漂流记", "格列佛游记", "西游记"
+        ],
+        "6": [
+            "未来的信", "发明家俱乐部", "失落的王国", "星际旅行笔记",
+            "三体", "基地", "银河系漫游指南", "安德的游戏"
+        ]
+    };
+    localStorage.setItem('booksDatabase', JSON.stringify(booksDatabase));
 }
 
 // 设置导航栏切换
